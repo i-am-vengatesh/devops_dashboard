@@ -76,6 +76,7 @@ pipeline {
     sh '''
       set -e
       export PYTHONPATH=.
+      pip install pytest pytest-cov pytest-mock
       mkdir -p reports/tests
       pytest tests \
         --junitxml=reports/tests/test-results.xml \
