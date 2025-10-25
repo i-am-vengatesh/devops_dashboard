@@ -112,7 +112,7 @@ stage('Archive Test Reports') {
         -Dsonar.host.url=http://10.244.192.41:9000 \
         -Dsonar.token=$SONAR_TOKEN \
         -Dsonar.python.coverage.reportPaths=reports/tests/coverage.xml
-        -Dsonar.exclusions=**/*.html
+        -Dsonar.exclusions=**/*.html,**/*.js,**/*.jinja2,**/templates/**,**/static/**
     '''
   }
 }
