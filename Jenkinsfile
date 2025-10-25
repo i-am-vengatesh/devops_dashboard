@@ -35,7 +35,13 @@ pipeline {
 
     stage('Run & Smoke Test App') {
   agent {
-    docker { image 'vengateshbabu1605/devops_dashboard-ci:latest' }
+     docker {
+          image 'vengateshbabu1605/devops_dashboard-ci:latest'
+          label 'blackkey'
+          reuseNode true
+          // If you need to expose host ports or mount volumes, add args here, e.g.
+          // args '-p 8000:8000 -v ${WORKSPACE}:/workspace'
+        }
   }
   steps {
     sh '''
