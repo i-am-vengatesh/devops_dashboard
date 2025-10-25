@@ -3,3 +3,8 @@ fastapi
 uvicorn[standard]
 jinja2
 httpx
+pytest
+pytest-cov
+pytest-mock
+
+
