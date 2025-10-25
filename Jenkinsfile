@@ -19,14 +19,12 @@ pipeline {
 
     stage('Install Dependencies / Build (Docker)') {
       agent {
-        docker { image 'python:3.11-slim' }
+        docker { image 'vengateshbabu1605/devops_dashboard-ci:latest' }
       }
       steps {
         sh '''
-          set -e
-          echo "Installing dependencies..."
-          pip install --no-cache-dir --break-system-packages -r requirements.txt
-          echo "Build step complete. (No actual build command for FastAPI app)"
+          echo "Dependencies are pre-installed in the Docker image."
+          echo "Build step complete. Ready for testing or deployment."
         '''
       }
     }
