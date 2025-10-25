@@ -1,12 +1,12 @@
 pipeline {
-  agent { label 'blackkey' } // or use 'any' if you don't have specific labels
+  agent { label 'blackkey' } // Use your Jenkins agent label
 
   stages {
     stage('Checkout DevOps Dashboard Repo') {
       steps {
         git branch: 'main',
-            url: 'https://github.com/i-am-vengatesh/devops_dashboard.git', // replace with your actual repo URL
-            credentialsId: 'git-creds' // your Jenkins Git credentials ID
+            url: 'https://github.com/i-am-vengatesh/devops_dashboard.git',
+            credentialsId: 'git-creds'
       }
     }
 
@@ -16,7 +16,8 @@ pipeline {
         sh 'ls -la'
       }
     }
-  stage('Install Dependencies / Build (Docker)') {
+
+    stage('Install Dependencies / Build (Docker)') {
       agent {
         docker { image 'python:3.11-slim' }
       }
@@ -31,7 +32,5 @@ pipeline {
         '''
       }
     }
-``
-    
   }
 }
