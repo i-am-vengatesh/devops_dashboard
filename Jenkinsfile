@@ -18,11 +18,12 @@ pipeline {
     }
 
     stage('Install Dependencies / Build (Docker)') {
-      agent { node { label 'blackkey' } }
-       docker { image 'vengateshbabu1605/devops_dashboard-ci:latest'}
-      
-    }
-        
+      agent {
+        docker {
+          image 'vengateshbabu1605/devops_dashboard-ci:latest'
+          label 'blackkey'
+          reuseNode true
+        }
       }
       steps {
         sh '''
@@ -31,28 +32,50 @@ pipeline {
         '''
       }
     }
+
     stage('Run & Smoke Test App') {
       agent {
-        docker { image 'vengateshbabu1605/devops_dashboard-ci:latest' }
-        label 'blackkey'
+        docker {
+          image 'vengageshbabu1605/devops_dashboard-ci:latest'
+          label 'blackkey'
+          reuseNode true
+          // If you need to expose host ports or mount volumes, add args here, e.g.
+          // args '-p 8000:8000 -v ${WORKSPACE}:/workspace'
+        }
       }
       steps {
         sh '''
           set -e
-          echo "Starting FastAPI app in background..."
+          cd /workspace || cd $WORKSPACE || true
+
+          echo "Starting FastAPI app in background (uvicorn)..."
+          # start uvicorn in background; adjust module:path if your app differs
           uvicorn main:app --host 0.0.0.0 --port 8000 &
           SERVER_PID=$!
 
+          # wait for the server to accept connections
           echo "Waiting for server to start..."
-          sleep 5
+          for i in 1 2 3 4 5 6 7 8 9 10; do
+            if curl -sS http://127.0.0.1:8000/ >/dev/null 2>&1; then
+              echo "Server is up"
+              break
+            fi
+            sleep 1
+          done
 
           echo "Running smoke test on root endpoint..."
-          curl -s http://localhost:8000 | grep "DevOps Dashboard"
+          # expect page to contain "DevOps Dashboard" — change as appropriate
+          curl -sS http://127.0.0.1:8000/ | grep "DevOps Dashboard"
 
           echo "Stopping FastAPI app..."
-          kill $SERVER_PID
+          kill $SERVER_PID || true
         '''
       }
     }
+  } // end stages
+
+  post {
+    success { echo 'Pipeline finished successfully.' }
+    failure { echo 'Pipeline failed — check console output.' }
   }
 }
