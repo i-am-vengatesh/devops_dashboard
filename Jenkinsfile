@@ -122,7 +122,7 @@ stage('Docker Build & Push') {
   agent {
     docker {
       image 'docker:latest'
-      args '--privileged -v /var/run/docker.sock:/var/run/docker.sock'
+      args '-v /var/run/docker.sock:/var/run/docker.sock'
     }
   }
   environment {
@@ -131,6 +131,8 @@ stage('Docker Build & Push') {
   steps {
     sh '''
       echo "Logging in to Docker Hub..."
+      mkdir -p /tmp/.docker
+      export DOCKER_CONFIG=/tmp/.docker
       echo "$DOCKERHUB_CREDENTIALS_PSW" | docker login -u "$DOCKERHUB_CREDENTIALS_USR" --password-stdin
 
       echo "Building Docker image..."
