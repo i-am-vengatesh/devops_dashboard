@@ -1,5 +1,5 @@
 pipeline {
-  agent { label 'blackkey' } // Use your Jenkins agent label
+  agent { label 'blackkey' }
 
   stages {
     stage('Checkout DevOps Dashboard Repo') {
@@ -18,21 +18,17 @@ pipeline {
     }
 
     stage('Install Dependencies / Build (Docker)') {
-      
-    agent {
+      agent {
         docker { image 'python:3.11-slim' }
       }
       steps {
         sh '''
           set -e
           echo "Installing dependencies..."
-          pip install --upgrade pip
           pip install --no-cache-dir --break-system-packages -r requirements.txt
-
           echo "Build step complete. (No actual build command for FastAPI app)"
         '''
       }
-
     }
   }
 }
