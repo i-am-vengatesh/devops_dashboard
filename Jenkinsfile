@@ -98,11 +98,13 @@ stage('Archive Test Reports') {
    stage('SonarQube Analysis') {
   agent {
     docker {
-      image 'sonarsource/sonar-scanner-cli:5.0.1'
+      image 'vengateshbabu1605/sonar-scanner-node:latest'
+      label 'blackkey'
+      reuseNode true
     }
   }
   environment {
-    SONAR_TOKEN = credentials('sonar-token1') // ID must match Jenkins credentials
+    SONAR_TOKEN = credentials('sonar-token')
   }
   steps {
     sh '''
@@ -112,7 +114,6 @@ stage('Archive Test Reports') {
         -Dsonar.host.url=http://10.244.192.41:9000 \
         -Dsonar.token=$SONAR_TOKEN \
         -Dsonar.python.coverage.reportPaths=reports/tests/coverage.xml
-        -Dsonar.exclusions=**/*.html,**/*.js,**/*.jinja2,**/templates/**,**/static/**
     '''
   }
 }
