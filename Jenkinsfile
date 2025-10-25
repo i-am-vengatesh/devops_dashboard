@@ -20,6 +20,7 @@ pipeline {
     stage('Install Dependencies / Build (Docker)') {
       agent {
         docker { image 'vengateshbabu1605/devops_dashboard-ci:latest' }
+        label 'blackkey'
       }
       steps {
         sh '''
@@ -31,6 +32,7 @@ pipeline {
     stage('Run & Smoke Test App') {
       agent {
         docker { image 'vengateshbabu1605/devops_dashboard-ci:latest' }
+        label 'blackkey'
       }
       steps {
         sh '''
