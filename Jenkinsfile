@@ -18,7 +18,8 @@ pipeline {
     }
 
     stage('Install Dependencies / Build (Docker)') {
-      agent {
+      
+    agent {
         docker { image 'python:3.11-slim' }
       }
       steps {
@@ -26,11 +27,12 @@ pipeline {
           set -e
           echo "Installing dependencies..."
           pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install --no-cache-dir --disable-pip-version-check --root-user-action=ignore -r requirements.txt
 
           echo "Build step complete. (No actual build command for FastAPI app)"
         '''
       }
+
     }
   }
 }
