@@ -118,11 +118,11 @@ stage('Archive Test Reports') {
   }
 }
 
- stage('Docker Build & Push') {
+stage('Docker Build & Push') {
   agent {
     docker {
-      image 'docker:20.10.24-dind' // or 'docker:latest'
-      args '-v /var/run/docker.sock:/var/run/docker.sock'
+      image 'docker:latest'
+      args '--privileged -v /var/run/docker.sock:/var/run/docker.sock'
     }
   }
   environment {
