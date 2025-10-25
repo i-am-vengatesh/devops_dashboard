@@ -131,8 +131,8 @@ stage('Archive Test Reports') {
   steps {
     sh '''
       echo "Logging in to Docker Hub..."
-      echo "$DOCKERHUB_CREDENTIALS_PSW" | docker login -u "$DOCKERHUB_CREDENTIALS_USR" --password-stdin
-
+      mkdir -p $HOME/.docker
+      echo "$DOCKERHUB_CREDENTIALS_PSW" | docker --config $HOME/.docker login -u "$DOCKERHUB_CREDENTIALS_USR" --password-stdin
       echo "Building Docker image..."
       docker build -t vengateshbabu1605/devops_desktop-ci:latest .
 
