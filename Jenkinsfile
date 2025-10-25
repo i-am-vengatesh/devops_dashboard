@@ -19,8 +19,12 @@ pipeline {
 
     stage('Install Dependencies / Build (Docker)') {
       agent {
-        docker { image 'vengateshbabu1605/devops_dashboard-ci:latest' }
-        label 'blackkey'
+        docker { 
+          image 'vengateshbabu1605/devops_dashboard-ci:latest'
+          label 'blackkey' // ✅ container will run on this node
+          reuseNode true // ✅ shares workspace between host & container
+        }
+        
       }
       steps {
         sh '''
