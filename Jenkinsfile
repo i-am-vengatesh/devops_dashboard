@@ -95,6 +95,27 @@ stage('Archive Test Reports') {
   }
 }
 
+    stage('SonarQube Analysis') {
+  agent {
+    docker {
+      image 'sonarsource/sonar-scanner-cli:5.0.1'
+    }
+  }
+  environment {
+    SONAR_TOKEN = credentials('sonar-token') // Jenkins credential ID for your SonarQube token
+  }
+  steps {
+    sh '''
+      sonar-scanner \
+        -Dsonar.projectKey=devops_dashboard \
+        -Dsonar.sources=. \
+        -Dsonar.host.url=http://<your-sonarqube-server-ip>:9000 \
+        -Dsonar.login=$SONAR_TOKEN \
+        -Dsonar.python.coverage.reportPaths=reports/tests/coverage.xml
+    '''
+  }
+}
+
   } // end stages
 
   post {
