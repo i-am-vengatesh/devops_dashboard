@@ -1,0 +1,27 @@
+FROM ubuntu:22.04
+
+# Set environment variables to avoid interactive prompts during package installation
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install system dependencies: Java, Node.js, Python, pip, curl, unzip
+RUN apt-get update && apt-get install -y \
+    openjdk-17-jdk \
+    nodejs \
+    npm \
+    python3 \
+    python3-pip \
+    curl \
+    unzip \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install SonarScanner CLI
+RUN curl -sSLo /tmp/sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip \
+    && unzip /tmp/sonar-scanner.zip -d /opt \
+    && ln -s /opt/sonar-scanner-5.0.1.3006-linux/bin/sonar-scanner /usr/local/bin/sonar-scanner
+
+# Set working directory
+WORKDIR /app
+
+# Default command
+CMD ["bash"]
+
