@@ -134,7 +134,7 @@ stage('Docker Build & Push') {
         echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USER" --password-stdin
 
         echo "Building Docker image..."
-        docker build -t vengateshbabu1605/devops_desktop-ci:latest .
+        docker build -f Dockerfile.ci -t vengateshbabu1605/devops_desktop-ci:latest .
 
         echo "Pushing Docker image to Docker Hub..."
         docker push vengateshbabu1605/devops_desktop-ci:latest
