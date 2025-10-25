@@ -102,7 +102,7 @@ stage('Archive Test Reports') {
     }
   }
   environment {
-    SONAR_TOKEN = credentials('sonar-token') // ID must match Jenkins credentials
+    SONAR_TOKEN = credentials('sonar-token1') // ID must match Jenkins credentials
   }
   steps {
     sh '''
