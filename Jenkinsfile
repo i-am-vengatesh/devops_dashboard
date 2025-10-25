@@ -61,6 +61,39 @@ pipeline {
     '''
   }
 }
+
+  stage('Unit Testing (pytest)') {
+  agent {
+    docker {
+          image 'vengateshbabu1605/devops_dashboard-ci:latest'
+          label 'blackkey'
+          reuseNode true
+          // If you need to expose host ports or mount volumes, add args here, e.g.
+          // args '-p 8000:8000 -v ${WORKSPACE}:/workspace'
+        }
+  }
+  steps {
+    sh '''
+      set -e
+      mkdir -p reports/tests
+      pytest tests \
+        --junitxml=reports/tests/test-results.xml \
+        --cov=. \
+        --cov-report=xml:reports/tests/coverage.xml
+    '''
+    stash includes: 'reports/tests/**', name: 'test-reports'
+  }
+}
+
+    
+stage('Archive Test Reports') {
+  steps {
+    unstash 'test-reports'
+    junit 'reports/tests/test-results.xml'
+    archiveArtifacts artifacts: 'reports/tests/coverage.xml'
+  }
+}
+
   } // end stages
 
   post {
