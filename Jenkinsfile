@@ -16,5 +16,22 @@ pipeline {
         sh 'ls -la'
       }
     }
+  stage('Install Dependencies / Build (Docker)') {
+      agent {
+        docker { image 'python:3.11-slim' }
+      }
+      steps {
+        sh '''
+          set -e
+          echo "Installing dependencies..."
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+          echo "Build step complete. (No actual build command for FastAPI app)"
+        '''
+      }
+    }
+``
+    
   }
 }
