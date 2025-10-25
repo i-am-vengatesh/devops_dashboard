@@ -121,30 +121,30 @@ stage('Archive Test Reports') {
 stage('Docker Build & Push') {
   agent {
     docker {
-      image 'docker:latest'
-      args '--privileged -v /var/run/docker.sock:/var/run/docker.sock'
+      image 'docker:24.0.2' // pick a docker CLI image
+      args '--privileged -v /var/run/docker.sock:/var/run/docker.sock -u 0:0'
     }
   }
-  environment {
-    DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')
-  }
   steps {
-    sh '''
-      echo "Logging in to Docker Hub..."
-      mkdir -p /tmp/.docker
-      export DOCKER_CONFIG=/tmp/.docker
-      echo "$DOCKERHUB_CREDENTIALS_PSW" | docker login -u "$DOCKERHUB_CREDENTIALS_USR" --password-stdin
+    withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKERHUB_USER', passwordVariable: 'DOCKERHUB_PASS')]) {
+      sh '''
+        echo "Logging in to Docker Hub..."
+        mkdir -p /tmp/.docker
+        export DOCKER_CONFIG=/tmp/.docker
+        echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USER" --password-stdin
 
-      echo "Building Docker image..."
-      docker build -t vengateshbabu1605/devops_desktop-ci:latest .
+        echo "Building Docker image..."
+        docker build -t vengateshbabu1605/devops_desktop-ci:latest .
 
-      echo "Pushing Docker image to Docker Hub..."
-      docker push vengateshbabu1605/devops_desktop-ci:latest
+        echo "Pushing Docker image to Docker Hub..."
+        docker push vengateshbabu1605/devops_desktop-ci:latest
 
-      echo "Docker build and push completed."
-    '''
+        echo "Docker build and push completed."
+      '''
+    }
   }
 }
+
 
   } // end stages
 
