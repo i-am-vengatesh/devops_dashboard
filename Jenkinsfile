@@ -95,14 +95,14 @@ stage('Archive Test Reports') {
   }
 }
 
-    stage('SonarQube Analysis') {
+   stage('SonarQube Analysis') {
   agent {
     docker {
       image 'sonarsource/sonar-scanner-cli:5.0.1'
     }
   }
   environment {
-    SONAR_TOKEN = credentials('sonar-token') // Jenkins credential ID for your SonarQube token
+    SONAR_TOKEN = credentials('sonar-token') // ID must match Jenkins credentials
   }
   steps {
     sh '''
@@ -110,7 +110,7 @@ stage('Archive Test Reports') {
         -Dsonar.projectKey=devops_dashboard \
         -Dsonar.sources=. \
         -Dsonar.host.url=http://10.244.192.41:9000 \
-        -Dsonar.login=$SONAR_TOKEN \
+        -Dsonar.token=$SONAR_TOKEN \
         -Dsonar.python.coverage.reportPaths=reports/tests/coverage.xml
     '''
   }
