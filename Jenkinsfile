@@ -118,6 +118,32 @@ stage('Archive Test Reports') {
   }
 }
 
+  stage('Docker Build & Push') {
+  agent {
+    docker {
+      image 'docker:latest' // Uses Docker CLI image
+      args '-v /var/run/docker.sock:/var/run/docker.sock' // Mounts host Docker socket
+    }
+  }
+  environment {
+    DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds') // Jenkins credentials ID
+  }
+  steps {
+    sh '''
+      echo "Logging in to Docker Hub..."
+      echo "$DOCKERHUB_CREDENTIALS_PSW" | docker login -u "$DOCKERHUB_CREDENTIALS_USR" --password-stdin
+
+      echo "Building Docker image..."
+      docker build -t vengateshbabu1605/devops_desktop-ci:latest .
+
+      echo "Pushing Docker image to Docker Hub..."
+      docker push vengateshbabu1605/devops_desktop-ci:latest
+
+      echo "Docker build and push completed."
+    '''
+  }
+}
+
   } // end stages
 
   post {
