@@ -131,13 +131,13 @@ stage('Archive Test Reports') {
   steps {
     sh '''
       echo "Logging in to Docker Hub..."
-      mkdir -p $HOME/.docker
-      echo "$DOCKERHUB_CREDENTIALS_PSW" | docker --config $HOME/.docker login -u "$DOCKERHUB_CREDENTIALS_USR" --password-stdin
+      mkdir -p /tmp/.docker
+      echo "$DOCKERHUB_CREDENTIALS_PSW" | docker --config /tmp/.docker login -u "$DOCKERHUB_CREDENTIALS_USR" --password-stdin
       echo "Building Docker image..."
       docker build -t vengateshbabu1605/devops_desktop-ci:latest .
 
       echo "Pushing Docker image to Docker Hub..."
-      docker push vengateshbabu1605/devops_desktop-ci:latest
+      docker --config /tmp/.docker push vengateshbabu1605/devops_desktop-ci:latest
 
       echo "Docker build and push completed."
     '''
