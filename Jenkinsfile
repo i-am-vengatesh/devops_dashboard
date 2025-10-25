@@ -27,7 +27,7 @@ pipeline {
           set -e
           echo "Installing dependencies..."
           pip install --upgrade pip
-          pip install --no-cache-dir --disable-pip-version-check --root-user-action=ignore -r requirements.txt
+          pip install --no-cache-dir --break-system-packages -r requirements.txt
 
           echo "Build step complete. (No actual build command for FastAPI app)"
         '''
