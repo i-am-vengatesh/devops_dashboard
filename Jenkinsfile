@@ -109,7 +109,7 @@ stage('Archive Test Reports') {
       sonar-scanner \
         -Dsonar.projectKey=devops_dashboard \
         -Dsonar.sources=. \
-        -Dsonar.host.url=http://<your-sonarqube-server-ip>:9000 \
+        -Dsonar.host.url=http://10.244.192.41:9000 \
         -Dsonar.login=$SONAR_TOKEN \
         -Dsonar.python.coverage.reportPaths=reports/tests/coverage.xml
     '''
