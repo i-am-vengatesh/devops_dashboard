@@ -28,5 +28,27 @@ pipeline {
         '''
       }
     }
+    stage('Run & Smoke Test App') {
+      agent {
+        docker { image 'vengateshbabu1605/devops_dashboard-ci:latest' }
+      }
+      steps {
+        sh '''
+          set -e
+          echo "Starting FastAPI app in background..."
+          uvicorn main:app --host 0.0.0.0 --port 8000 &
+          SERVER_PID=$!
+
+          echo "Waiting for server to start..."
+          sleep 5
+
+          echo "Running smoke test on root endpoint..."
+          curl -s http://localhost:8000 | grep "DevOps Dashboard"
+
+          echo "Stopping FastAPI app..."
+          kill $SERVER_PID
+        '''
+      }
+    }
   }
 }
