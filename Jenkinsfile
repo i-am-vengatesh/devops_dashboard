@@ -75,6 +75,7 @@ pipeline {
   steps {
     sh '''
       set -e
+      export PYTHONPATH=.
       mkdir -p reports/tests
       pytest tests \
         --junitxml=reports/tests/test-results.xml \
