@@ -104,7 +104,7 @@ stage('Archive Test Reports') {
     }
   }
   environment {
-    SONAR_TOKEN = credentials('sonar-token')
+    SONAR_TOKEN = credentials('sonar-token1')
   }
   steps {
     sh '''
