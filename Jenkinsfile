@@ -145,6 +145,27 @@ stage('Docker Build & Push') {
   }
 }
 
+  stage('Helm Deploy to Test Namespace') {
+  agent {
+    docker {
+      image 'vengateshbabu1605/k8s-agent:latest'
+      args '--privileged -v /var/run/docker.sock:/var/run/docker.sock'
+    }
+  }
+  steps {
+    sh '''
+      echo "Deploying DevOps Dashboard using Helm..."
+      helm upgrade --install devops-dashboard ./helm/devops_dashboard \
+        --namespace devops-dashboard-test --create-namespace
+
+      echo "Verifying deployment..."
+      kubectl get all -n devops-dashboard-test
+
+      echo "Helm deployment completed."
+    '''
+  }
+}
+
 
   } // end stages
 
