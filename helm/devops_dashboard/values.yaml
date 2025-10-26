@@ -1,1 +1,11 @@
 # Default configuration values
+image:
+  repository: vengateshbabu1605/devops_desktop-ci
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8000
+
+namespace: devops-dashboard-test
