@@ -8,4 +8,4 @@ service:
   type: ClusterIP
   port: 8000
 
-namespace: devops-dashboard-test
+namespace: devops_dashboard-test
