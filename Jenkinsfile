@@ -145,7 +145,7 @@ stage('Docker Build & Push') {
   }
 }
 
-  stage('Helm Deploy to Test Namespace') {
+ stage('Helm Deploy to Test Namespace') {
   agent {
     docker {
       image 'vengateshbabu1605/k8s-agent:latest'
@@ -154,6 +154,9 @@ stage('Docker Build & Push') {
   }
   steps {
     sh '''
+      echo "Creating Kind cluster if not exists..."
+      kind get clusters || kind create cluster --name devops-cluster
+
       echo "Deploying DevOps Dashboard using Helm..."
       helm upgrade --install devops-dashboard ./helm/devops_dashboard \
         --namespace devops-dashboard-test --create-namespace
