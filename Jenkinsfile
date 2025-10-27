@@ -147,28 +147,36 @@ stage('Docker Build & Push') {
   }
 }
 
- stage('Helm Deploy to Test Namespace') {
-  agent { label 'blackkey' } // Jenkins agent with SSH access
-
-  steps {
-    sshagent(['remote-ubuntu-ssh-creds']) {
-      sh '''
-        echo "Connecting to remote Ubuntu machine..."
-        ssh -o StrictHostKeyChecking=no sysbkpbld@10.244.192.41 << EOF
-          echo "Creating Kind cluster if not exists..."
-          kind get clusters || kind create cluster --name devops-cluster
-
-          echo "Deploying DevOps Dashboard using Helm..."
-          helm upgrade --install devops-dashboard /home/user/devops_dashboard \
-            --namespace devops-dashboard-test --create-namespace
-
-          echo "Verifying deployment..."
-          kubectl get all -n devops-dashboard-test
-
-          echo "Helm deployment completed."
-        EOF
-      '''
+ stage('Argo CD Deploy to Test Namespace') {
+  agent {
+    docker {
+      image 'vengateshbabu1605/argocd-agent:latest'
+      args '-u 0:0'
     }
+  }
+  environment {
+    ARGOCD_SERVER = 'your-argocd-server-url' // e.g., argocd.example.com
+    ARGOCD_USERNAME = credentials('argocd-user') // Jenkins credentials ID
+    ARGOCD_PASSWORD = credentials('argocd-pass') // Jenkins credentials ID
+  }
+  steps {
+    sh '''
+      echo "Logging into Argo CD..."
+      argocd login $ARGOCD_SERVER --username $ARGOCD_USERNAME --password $ARGOCD_PASSWORD --insecure
+
+      echo "Creating or updating Argo CD application..."
+      argocd app create devops-dashboard \
+        --repo https://github.com/i-am-vengatesh/devops_dashboard.git \
+        --path helm/devops_dashboard \
+        --dest-server https://kubernetes.default.svc \
+        --dest-namespace devops-dashboard-test \
+        --sync-policy automated || echo "App already exists"
+
+      echo "Syncing application..."
+      argocd app sync devops-dashboard
+
+      echo "Argo CD deployment completed."
+    '''
   }
 }
 
