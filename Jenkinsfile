@@ -122,6 +122,8 @@ stage('Docker Build & Push') {
   agent {
     docker {
       image 'docker:24.0.2' // pick a docker CLI image
+      label 'blackkey'
+      reuseNode true
       args '--privileged -v /var/run/docker.sock:/var/run/docker.sock -u 0:0'
     }
   }
