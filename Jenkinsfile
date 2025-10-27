@@ -146,29 +146,29 @@ stage('Docker Build & Push') {
 }
 
  stage('Helm Deploy to Test Namespace') {
-  agent {
-    docker {
-      image 'vengateshbabu1605/k8s-agent:latest'
-      args '--privileged -v /var/run/docker.sock:/var/run/docker.sock'
+  agent { label 'blackkey' } // Jenkins agent with SSH access
+
+  steps {
+    sshagent(['remote-ubuntu-ssh-creds']) {
+      sh '''
+        echo "Connecting to remote Ubuntu machine..."
+        ssh -o StrictHostKeyChecking=no sysbkpbld@10.244.192.41 << EOF
+          echo "Creating Kind cluster if not exists..."
+          kind get clusters || kind create cluster --name devops-cluster
+
+          echo "Deploying DevOps Dashboard using Helm..."
+          helm upgrade --install devops-dashboard /home/user/devops_dashboard \
+            --namespace devops-dashboard-test --create-namespace
+
+          echo "Verifying deployment..."
+          kubectl get all -n devops-dashboard-test
+
+          echo "Helm deployment completed."
+        EOF
+      '''
     }
   }
-  steps {
-    sh '''
-      echo "Creating Kind cluster if not exists..."
-      kind get clusters || kind create cluster --name devops-cluster
-
-      echo "Deploying DevOps Dashboard using Helm..."
-      helm upgrade --install devops-dashboard ./helm/devops_dashboard \
-        --namespace devops-dashboard-test --create-namespace
-
-      echo "Verifying deployment..."
-      kubectl get all -n devops-dashboard-test
-
-      echo "Helm deployment completed."
-    '''
-  }
 }
-
 
   } // end stages
 
