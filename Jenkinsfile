@@ -21,7 +21,7 @@ pipeline {
       agent {
         docker {
           image 'vengateshbabu1605/devops_dashboard-ci:latest'
-          label 'blackkey'
+          label 'bkps-build-1'
           reuseNode true
         }
       }
