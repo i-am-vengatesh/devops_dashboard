@@ -153,7 +153,7 @@ stage('Deploy to Kubernetes (Classic)') {
       image 'bitnami/kubectl:latest'
       label 'blackkey'
       reuseNode true
-      args '-v $HOME/.kube:/root/.kube'
+      args '--entrypoint="" -v $HOME/.kube:/root/.kube'
     }
   }
   steps {
