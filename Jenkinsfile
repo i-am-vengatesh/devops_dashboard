@@ -161,11 +161,14 @@ stage('Deploy to Kind Cluster') {
   }
   steps {
     sh '''
-      echo "Deploying to Kind cluster..."
-      kubectl apply -f k8s/deployment.yaml
-      kubectl apply -f k8s/service.yaml
-      kubectl rollout status deployment/devops-dashboard
-    '''
+  echo "Switching to Kind context..."
+  kubectl config use-context kind-devops-cluster
+
+  echo "Deploying to Kind cluster..."
+  kubectl apply -f k8s/deployment.yaml
+  kubectl apply -f k8s/service.yaml
+  kubectl rollout status deployment/devops-dashboard
+'''
   }
 }
 
