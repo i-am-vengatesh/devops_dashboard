@@ -147,7 +147,7 @@ stage('Docker Build & Push') {
   }
 }
 
-stage('Deploy to Kubernetes (Classic)') {
+stage('Deploy to Kind Cluster') {
   agent {
     docker {
       image 'bitnami/kubectl:latest'
@@ -161,7 +161,7 @@ stage('Deploy to Kubernetes (Classic)') {
   }
   steps {
     sh '''
-      echo "Deploying to Kubernetes..."
+      echo "Deploying to Kind cluster..."
       kubectl apply -f k8s/deployment.yaml
       kubectl apply -f k8s/service.yaml
       kubectl rollout status deployment/devops-dashboard
