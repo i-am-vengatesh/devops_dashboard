@@ -156,6 +156,9 @@ stage('Deploy to Kubernetes (Classic)') {
       args '--entrypoint="" -v $HOME/.kube:/root/.kube'
     }
   }
+  environment {
+    KUBECONFIG = '/root/.kube/config'
+  }
   steps {
     sh '''
       echo "Deploying to Kubernetes..."
