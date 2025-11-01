@@ -146,20 +146,25 @@ stage('Docker Build & Push') {
     }
   }
 }
+
 stage('Argo CD Deploy to Test') {
   agent {
     docker {
       image 'vengateshbabu1605/argocd-cli:latest'
       label 'blackkey'
       reuseNode true
-      args '--entrypoint=""' // override ENTRYPOINT to allow shell commands
+      args '--entrypoint=""'
     }
   }
   steps {
     withCredentials([usernamePassword(credentialsId: 'argocd-creds', usernameVariable: 'ARGOCD_USER', passwordVariable: 'ARGOCD_PASS')]) {
       sh '''
         echo "Logging into Argo CD..."
-        argocd login unmerited-anh-gabbroitic.ngrok-free.dev --username $ARGOCD_USER --password $ARGOCD_PASS --insecure
+        argocd login unmerited-anh-gabbroitic.ngrok-free.dev \
+          --username $ARGOCD_USER \
+          --password $ARGOCD_PASS \
+          --insecure \
+          --grpc-web
 
         echo "Syncing Argo CD application..."
         argocd app sync devops-dashboard
