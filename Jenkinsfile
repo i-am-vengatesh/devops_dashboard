@@ -147,6 +147,29 @@ stage('Docker Build & Push') {
   }
 }
 
+    stage('Argo CD Deploy to Test') {
+  agent {
+    docker {
+      image 'vengateshbabu1605/argocd-cli:latest'
+      label 'blackkey'
+      reuseNode true
+    }
+  }
+  steps {
+    withCredentials([usernamePassword(credentialsId: 'argocd-creds', usernameVariable: 'ARGOCD_USER', passwordVariable: 'ARGOCD_PASS')]) {
+      sh '''
+        echo "Logging into Argo CD..."
+        argocd login unmerited-anh-gabbroitic.ngrok-free.dev --username $ARGOCD_USER --password $ARGOCD_PASS --insecure
+
+        echo "Syncing Argo CD application..."
+        argocd app sync devops-dashboard
+
+        echo "Waiting for app to become healthy..."
+        argocd app wait devops-dashboard --health --timeout 180
+      '''
+    }
+  }
+}
 
 
   } // end stages
