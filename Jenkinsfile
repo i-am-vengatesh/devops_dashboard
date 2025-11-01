@@ -150,7 +150,7 @@ stage('Docker Build & Push') {
 stage('Deploy to Kind Cluster') {
   agent {
     docker {
-      image 'yourdockerhubuser/kind-kubectl:latest'
+      image 'vengateshbabu1605/kind-kubectl:latest'
       label 'blackkey'
       reuseNode true
       args '--entrypoint="" --network=host -u 0:0 -v $HOME/.kube:/root/.kube'
