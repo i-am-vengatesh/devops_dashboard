@@ -150,10 +150,10 @@ stage('Docker Build & Push') {
 stage('Deploy to Kind Cluster') {
   agent {
     docker {
-      image 'bitnami/kubectl:latest'
+      image 'yourdockerhubuser/kind-kubectl:latest'
       label 'blackkey'
       reuseNode true
-      args '--entrypoint="" -u 0:0 -v $HOME/.kube:/root/.kube'
+      args '--entrypoint="" --network=host -u 0:0 -v $HOME/.kube:/root/.kube'
     }
   }
   environment {
@@ -161,14 +161,14 @@ stage('Deploy to Kind Cluster') {
   }
   steps {
     sh '''
-  echo "Switching to Kind context..."
-  kubectl config use-context kind-devops-cluster
+      echo "Switching to Kind context..."
+      kubectl config use-context kind-devops-cluster
 
-  echo "Deploying to Kind cluster..."
-  kubectl apply -f k8s/deployment.yaml
-  kubectl apply -f k8s/service.yaml
-  kubectl rollout status deployment/devops-dashboard
-'''
+      echo "Deploying to Kind cluster..."
+      kubectl apply -f k8s/deployment.yaml
+      kubectl apply -f k8s/service.yaml
+      kubectl rollout status deployment/devops-dashboard
+    '''
   }
 }
 
