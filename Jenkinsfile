@@ -146,13 +146,13 @@ stage('Docker Build & Push') {
     }
   }
 }
-
-    stage('Argo CD Deploy to Test') {
+stage('Argo CD Deploy to Test') {
   agent {
     docker {
       image 'vengateshbabu1605/argocd-cli:latest'
       label 'blackkey'
       reuseNode true
+      args '--entrypoint=""' // override ENTRYPOINT to allow shell commands
     }
   }
   steps {
