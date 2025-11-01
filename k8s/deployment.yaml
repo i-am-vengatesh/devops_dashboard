@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devops-dashboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: devops-dashboard
+  template:
+    metadata:
+      labels:
+        app: devops-dashboard
+    spec:
+      containers:
+      - image: vengateshbabu1605/devops_dashboard-ci:latest
+        name: devops-dashboard
+        ports:
+        - containerPort: 8000
