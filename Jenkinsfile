@@ -147,38 +147,7 @@ stage('Docker Build & Push') {
   }
 }
 
- stage('Argo CD Deploy to Test Namespace') {
-  agent {
-    docker {
-      image 'vengateshbabu1605/argocd-agent:latest'
-      args '-u 0:0'
-    }
-  }
-  environment {
-    ARGOCD_SERVER = 'your-argocd-server-url' // e.g., argocd.example.com
-    ARGOCD_USERNAME = credentials('argocd-user') // Jenkins credentials ID
-    ARGOCD_PASSWORD = credentials('argocd-pass') // Jenkins credentials ID
-  }
-  steps {
-    sh '''
-      echo "Logging into Argo CD..."
-      argocd login $ARGOCD_SERVER --username $ARGOCD_USERNAME --password $ARGOCD_PASSWORD --insecure
 
-      echo "Creating or updating Argo CD application..."
-      argocd app create devops-dashboard \
-        --repo https://github.com/i-am-vengatesh/devops_dashboard.git \
-        --path helm/devops_dashboard \
-        --dest-server https://kubernetes.default.svc \
-        --dest-namespace devops-dashboard-test \
-        --sync-policy automated || echo "App already exists"
-
-      echo "Syncing application..."
-      argocd app sync devops-dashboard
-
-      echo "Argo CD deployment completed."
-    '''
-  }
-}
 
   } // end stages
 
