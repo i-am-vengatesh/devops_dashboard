@@ -147,33 +147,22 @@ stage('Docker Build & Push') {
   }
 }
 
-stage('Argo CD Deploy to Test') {
+stage('Deploy to Kubernetes (Classic)') {
   agent {
     docker {
-      image 'vengateshbabu1605/argocd-cli:latest'
+      image 'bitnami/kubectl:latest'
       label 'blackkey'
       reuseNode true
-      args '--entrypoint=""'
+      args '-v $HOME/.kube:/root/.kube'
     }
   }
   steps {
-    withCredentials([usernamePassword(credentialsId: 'argocd-creds', usernameVariable: 'ARGOCD_USER', passwordVariable: 'ARGOCD_PASS')]) {
-      sh '''
-  echo "Logging into Argo CD..."
-  argocd login unmerited-anh-gabbroitic.ngrok-free.dev \
-    --username $ARGOCD_USER \
-    --password $ARGOCD_PASS \
-    --insecure \
-    --grpc-web \
-    --plaintext
-
-  echo "Syncing Argo CD application..."
-  argocd app sync devops-dashboard
-
-  echo "Waiting for app to become healthy..."
-  argocd app wait devops-dashboard --health --timeout 180
-'''
-    }
+    sh '''
+      echo "Deploying to Kubernetes..."
+      kubectl apply -f k8s/deployment.yaml
+      kubectl apply -f k8s/service.yaml
+      kubectl rollout status deployment/devops-dashboard
+    '''
   }
 }
 
