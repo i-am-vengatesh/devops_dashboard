@@ -149,6 +149,8 @@ pipeline {
       image 'lachlanevenson/k8s-kubectl:latest'
       label 'blackkey'
       reuseNode true
+      // run as root to avoid exiting due to missing user inside image
+      args '-u 0:0'
     }
   }
   environment {
@@ -164,14 +166,17 @@ pipeline {
         chmod 600 ${KUBECONFIG_PATH}
         export KUBECONFIG=${KUBECONFIG_PATH}
 
+        echo "kubectl client:"
         kubectl version --client --short || true
+        echo "Applying manifests from ${K8S_DIR}..."
         kubectl apply -f ${K8S_DIR}
 
-        # ... rollout/wait logic as before ...
+        # (rollout / wait logic follows — same as before)
       '''
     }
   }
 }
+
 
     // ----------------- end Deploy stage -----------------
 
